@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+  apache201:
+    build:
+      context: ./frontend
+    image: frontend
+    container_name: rails-stack01-apache201
+    networks:
+      - rails-stack01-network01
+    volumes:
+      - apache201-log-volume:/var/log/apache2:rw
+    depends_on:
+      - rails01
+  rails01:
+    build:
+      context: ./application
+    image: application
+    container_name: rails-stack01-rails01
+    networks:
+      - rails-stack01-network01
+    volumes:
+      - rails01-log-volume:/app/project/log:rw
+    depends_on:
+      - postgresql01
+      - redis01
+  postgresql01:
+    build:
+      context: ./database
+    image: database
+    container_name: rails-stack01-postgresql01
+    networks:
+      - rails-stack01-network01
+  redis01:
+    build:
+      context: ./redis
+    image: redis
+    container_name: rails-stack01-redis01
+    networks:
+      - rails-stack01-network01
+networks:
+  rails-stack01-network01:
+    ipam:
+      config:
+        - subnet: 172.20.16.0/24
+volumes:
+  apache201-log-volume:
+  rails01-log-volume:
+  postgresql01-log-volume:
+  redis01-log-volume:
