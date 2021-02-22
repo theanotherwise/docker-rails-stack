@@ -1,50 +1,45 @@
-version: '3.7'
+version: '3.9'
 
 services:
-  apache201:
+  httpd:
     build:
-      context: ./frontend
-    image: frontend
-    container_name: rails-stack01-apache201
+      context: ./httpd
+    container_name: httpd
+    ports:
+      - 8080:80
     networks:
-      - rails-stack01-network01
-    volumes:
-      - apache201-log-volume:/var/log/apache2:rw
+      - rails-stack
     depends_on:
-      - rails01
-  rails01:
+      - rails
+  rails:
     build:
-      context: ./application
-    image: application
-    container_name: rails-stack01-rails01
+      context: ./rails
+    container_name: rails
+    environment:
+      RAILS_ENV: production
+      RAILS_SERVE_STATIC_FILES: 'true'
+      RAILS_LOG_TO_STDOUT: 'true'
     networks:
-      - rails-stack01-network01
-    volumes:
-      - rails01-log-volume:/app/project/log:rw
+      - rails-stack
     depends_on:
-      - postgresql01
-      - redis01
-  postgresql01:
-    build:
-      context: ./database
-    image: database
-    container_name: rails-stack01-postgresql01
+      - postgres
+  postgres:
+    image: postgres:13.2
+    container_name: postgres
+    environment:
+      POSTGRES_DB: rails
+      POSTGRES_USER: rails
+      POSTGRES_PASSWORD: rails
+      POSTGRES_HOST_AUTH_METHOD: md5
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+    - postgres-pgdata:/var/lib/postgresql/data/pgdata
     networks:
-      - rails-stack01-network01
-  redis01:
-    build:
-      context: ./redis
-    image: redis
-    container_name: rails-stack01-redis01
-    networks:
-      - rails-stack01-network01
+      - rails-stack
 networks:
-  rails-stack01-network01:
+  rails-stack:
     ipam:
       config:
         - subnet: 172.20.16.0/24
 volumes:
-  apache201-log-volume:
-  rails01-log-volume:
-  postgresql01-log-volume:
-  redis01-log-volume:
+  postgres-pgdata:
