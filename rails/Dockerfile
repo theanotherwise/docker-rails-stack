@@ -4,10 +4,11 @@ RUN apk add --no-cache libxml2 libxslt build-base libxml2-dev libxslt-dev postgr
     gem update --system && \
     gem install nokogiri --platform=ruby -- --use-system-libraries
 
-RUN gem install rails -v 6.1.3
-RUN rails new --database=postgresql --skip-test --no-dev app
-
 WORKDIR /app
+
+RUN gem install rails -v 6.1.3
+
+RUN rails new --database=postgresql --no-api --skip-git --skip-test --skip-bundle --skip-webpack-install .
 
 COPY ./files/database.yml config/database.yml
 
@@ -18,6 +19,10 @@ RUN bundle exec rails g controller Home index contact
 
 COPY ./files/routes.rb config/routes.rb
 
-RUN bundle exec rails webpacker:compile
+RUN yarn add bootstrap jquery popper.js
+
+RUN bundle install && \
+    bundle exec rails webpacker:install && \
+    bundle exec rails webpacker:compile
 
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
