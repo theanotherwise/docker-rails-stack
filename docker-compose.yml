@@ -7,8 +7,6 @@ services:
     container_name: httpd
     ports:
       - 8080:80
-    networks:
-      - rails-stack
     depends_on:
       - rails
   rails:
@@ -19,8 +17,6 @@ services:
       RAILS_ENV: production
       RAILS_SERVE_STATIC_FILES: 'true'
       RAILS_LOG_TO_STDOUT: 'true'
-    networks:
-      - rails-stack
     depends_on:
       - postgres
   postgres:
@@ -34,12 +30,6 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
     - postgres-pgdata:/var/lib/postgresql/data/pgdata
-    networks:
-      - rails-stack
-networks:
-  rails-stack:
-    ipam:
-      config:
-        - subnet: 172.20.16.0/24
+
 volumes:
   postgres-pgdata:
