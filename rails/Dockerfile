@@ -1,4 +1,4 @@
-FROM ruby:2.7-alpine3.13
+FROM ruby:3.0-alpine3.13
 
 RUN apk add --no-cache libxml2 libxslt build-base libxml2-dev libxslt-dev postgresql-dev tzdata nodejs yarn && \
     gem update --system && \
@@ -18,8 +18,6 @@ RUN sed -i "s/config.assets.compile = false/config.assets.compile = true/g" conf
 RUN bundle exec rails g controller Home index contact
 
 COPY ./files/routes.rb config/routes.rb
-
-RUN yarn add bootstrap jquery popper.js
 
 RUN bundle install && \
     bundle exec rails webpacker:install && \
