@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  httpd:
+  httpd: # httpd:2.4.46
     build:
       context: ./httpd
     container_name: httpd
@@ -9,7 +9,7 @@ services:
       - 8080:80
     depends_on:
       - rails
-  rails:
+  rails: # ruby:3.0.0-alpine3.13
     build:
       context: ./rails
     container_name: rails
